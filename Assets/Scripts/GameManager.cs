@@ -6,18 +6,18 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance{ get; set; }
+    public static GameManager Instance{ get; set; } //access to gameManager in another scripts.
 
+    [SerializeField]  // game speed start to end
+    public float SpeedMin = 1;  
     [SerializeField]
-    public float gameSpeedMin = 0;
+    public float SpeedMax = 1.5f;
     [SerializeField]
-    public float gameSpeedMax = 0;
-    [SerializeField]
-    public GameObject ExplosionVFX;
-    private float time = 0;
-    public string scene;
     public float nextLeveltime;
 
+
+    private float time = 0;
+    public string scene;
     private GameObject Player;
 
     public float CurrentGameSpeed { get; set; }
@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
 
     public bool startGame { get; set; }
 
-    public delegate void OnGameStart();
+    public delegate void OnGameStart(); // events help to know if the game is running. (helpful in another scripts)
     public static event OnGameStart onGameStart;
     public static event OnGameStart onGameEnd;
 
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     public int HighScore{ get; set; }
 
     float timer = 0.0f;
-    int seconds;
+    private Vector3 initPlayer;
 
 
     private void Awake()
@@ -45,23 +45,25 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Player = GameObject.FindGameObjectWithTag("Player");
-        startGame = false;
-        ShipCollsion.onCollision += ResetLevel;
-        StartCoroutine(WaitForSpace());
+        Player = GameObject.FindGameObjectWithTag("Player"); //define player object.
+        initPlayer = transform.position;
+        Player.transform.GetChild(1).gameObject.SetActive(false);
+        startGame = false; // the game has not started yet
+        PlayerChildColl.onCollision += ResetLevel; // initialize the game
+        StartCoroutine(WaitForSpace()); //waiting for press space key to start
     }
 
 
     IEnumerator WaitForSpace()
     {
-        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
-        GameStart();
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space)); //waiting for press space
+        GameStart(); //start game 
     }
 
     private void GameStart()
     {
-        onGameStart();
-        CurrentGameSpeed = gameSpeedMin;
+        onGameStart(); // update the event as active game.
+        CurrentGameSpeed = SpeedMin; // initalize the first speed.
         startGame = true;
     }
 
@@ -73,18 +75,32 @@ public class GameManager : MonoBehaviour
             timer += Time.deltaTime * CurrentGameSpeed;
             Score = Convert.ToInt32(timer);
 
-            if(CurrentGameSpeed< gameSpeedMax)
+            if(CurrentGameSpeed< SpeedMax)  // define game acceleration
                 CurrentGameSpeed += Time.deltaTime / 500;
 
             Debug.Log(CurrentGameSpeed);
             time += Time.deltaTime;
             if (GameManager.Instance.CurrentGameSpeed != 0)
             {
-                if (time > nextLeveltime / GameManager.Instance.CurrentGameSpeed)
+                if (time > nextLeveltime / GameManager.Instance.CurrentGameSpeed) //the level is ended , loading next level after x seconds.
                 {
-                    ResetLevel();
+                    ResetLevel();     
                     SceneManager.LoadScene(scene);
 
+                }
+            }
+
+            if (Player.transform.position.y <0)
+            {
+                if (Player.transform.GetChild(1).gameObject.activeSelf)
+                {
+                    Player.transform.position = initPlayer+Vector3.one;
+                    Player.transform.GetChild(1).gameObject.SetActive(false);
+
+                }
+                else
+                {
+                    ResetLevel();
                 }
             }
         }
@@ -95,10 +111,13 @@ public class GameManager : MonoBehaviour
     public void ResetLevel()
     {
         //onGameEnd();
+        //data reset
         time = 0;
         CurrentGameSpeed = 0;
         startGame = false;
         timer = 0;
         StartCoroutine(WaitForSpace());
+        Player.transform.GetChild(1).gameObject.SetActive(false);
+
     }
 }

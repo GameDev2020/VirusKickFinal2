@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Ground
   - Virus
+  - Mask
+  - Sheild
   layers:
   - Default
   - TransparentFX

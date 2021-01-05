@@ -5,19 +5,18 @@ using UnityEngine;
 public class PlatformSpawner : MonoBehaviour
 {
     [SerializeField]
-    private GameObject platform0;
-
+    private GameObject initPlatform;
     [SerializeField]
     private GameObject startPlatform;
-
     [SerializeField]
     private float space = 40;
+    [SerializeField]
+    private float spawnCountTimeMax = 1f;
 
     private Transform previousPlatform;
     private GameManager gm;
 
-    private float spawnTimer;
-    [SerializeField] private float spawnTimerMax = 1f;
+    private float spawnCountTime;
 
    
     // Start is called before the first frame update
@@ -32,7 +31,7 @@ public class PlatformSpawner : MonoBehaviour
         if (this != null)
         {
             startPlatform.SetActive(true);
-            previousPlatform = platform0.transform;
+            previousPlatform = initPlatform.transform;
         }
         PlatformPooler.Instance.DeactivateAllObject();
     }
@@ -41,13 +40,13 @@ public class PlatformSpawner : MonoBehaviour
     {
         if (gm.startGame)
         {
-            if (spawnTimer > 0)
+            if (spawnCountTime > 0)
             {
-                spawnTimer -= Time.deltaTime;
+                spawnCountTime -= Time.deltaTime;
             }
             else
             {
-                spawnTimer = spawnTimerMax / gm.CurrentGameSpeed;
+                spawnCountTime = spawnCountTimeMax / gm.CurrentGameSpeed;
                 InstantiatePlatforms();
             }
         }
@@ -61,6 +60,10 @@ public class PlatformSpawner : MonoBehaviour
             platform.transform.position = new Vector3(0, 0, previousPlatform.position.z + space);
             previousPlatform = platform.transform;
             platform.SetActive(true);
+            if (platform.transform.childCount!=0)
+            {
+                platform.transform.GetChild(0).gameObject.SetActive(true);
+            }
         }
     }
 }

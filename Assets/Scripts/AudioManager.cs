@@ -9,7 +9,7 @@ public class AudioManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ShipCollsion.onCollision += DestroySound;
+        PlayerChildColl.onCollision += DestroySound;
     }
 
     private void DestroySound()
