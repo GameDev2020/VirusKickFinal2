@@ -5,7 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayScript : MonoBehaviour
 {
-    public void PlayGame(){
+    public void PlayGame()
+    {
         SceneManager.LoadScene("level1");
 
     }
