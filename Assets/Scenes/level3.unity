@@ -1949,6 +1949,7 @@ MonoBehaviour:
   SpeedMin: 1
   SpeedMax: 1.5
   nextLeveltime: 60
+  RotateSkybox: 1.2
   scene: level4
 --- !u!114 &835700883
 MonoBehaviour:
@@ -3177,8 +3178,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1709103446}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 16.5}
-  m_LocalScale: {x: 20, y: 30, z: 30}
+  m_LocalPosition: {x: 0, y: 3.7, z: 16.5}
+  m_LocalScale: {x: 20, y: 17.963375, z: 19.96888}
   m_Children: []
   m_Father: {fileID: 1223436872}
   m_RootOrder: 1

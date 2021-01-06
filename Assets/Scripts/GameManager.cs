@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public float SpeedMax = 1.5f;
     [SerializeField]
     public float nextLeveltime;
-
+    public float RotateSkybox=1.2f;
 
     private float time = 0;
     public string scene;
@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        RenderSettings.skybox.SetFloat("_Rotation", Time.time * RotateSkybox);
         if (startGame)
         {
             timer += Time.deltaTime * CurrentGameSpeed;
