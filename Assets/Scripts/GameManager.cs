@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
     {
         Player = GameObject.FindGameObjectWithTag("Player"); //define player object.
         initPlayer = transform.position;
-        Player.transform.GetChild(1).gameObject.SetActive(false);
+        Player.transform.GetChild(3).gameObject.SetActive(false);
         startGame = false; // the game has not started yet
         PlayerChildColl.onCollision += ResetLevel; // initialize the game
         StartCoroutine(WaitForSpace()); //waiting for press space key to start
@@ -62,6 +62,16 @@ public class GameManager : MonoBehaviour
 
     private void GameStart()
     {
+        //disables the masks on alien faces
+        GameObject[] MaskArray = GameObject.FindGameObjectsWithTag("Mask");
+        if (MaskArray.Length > 0)
+        {            
+            for (int i = 0; i < MaskArray.Length; i++)
+            {
+                GameObject go = MaskArray[i];
+                go.SetActive(false);
+            }
+        }
         onGameStart(); // update the event as active game.
         CurrentGameSpeed = SpeedMin; // initalize the first speed.
         startGame = true;
@@ -79,7 +89,7 @@ public class GameManager : MonoBehaviour
             if(CurrentGameSpeed< SpeedMax)  // define game acceleration
                 CurrentGameSpeed += Time.deltaTime / 500;
 
-            Debug.Log(CurrentGameSpeed);
+            
             time += Time.deltaTime;
             if (GameManager.Instance.CurrentGameSpeed != 0)
             {
@@ -93,10 +103,10 @@ public class GameManager : MonoBehaviour
 
             if (Player.transform.position.y <0)
             {
-                if (Player.transform.GetChild(1).gameObject.activeSelf)
+                if (Player.transform.GetChild(3).gameObject.activeSelf)
                 {
                     Player.transform.position = initPlayer+Vector3.one;
-                    Player.transform.GetChild(1).gameObject.SetActive(false);
+                    Player.transform.GetChild(3).gameObject.SetActive(false);
 
                 }
                 else
@@ -118,7 +128,7 @@ public class GameManager : MonoBehaviour
         startGame = false;
         timer = 0;
         StartCoroutine(WaitForSpace());
-        Player.transform.GetChild(1).gameObject.SetActive(false);
+        Player.transform.GetChild(3).gameObject.SetActive(false);
 
     }
 }
