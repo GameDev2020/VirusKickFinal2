@@ -18,7 +18,7 @@ public class CenterCollScript : MonoBehaviour
     // Update is called once per frame
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.tag == tag)
+        if (other.transform.tag == tag || other.transform.tag=="Alien")
         {
             gm.ResetLevel();
         }

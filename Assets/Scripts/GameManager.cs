@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,6 +30,11 @@ public class GameManager : MonoBehaviour
     public static event OnGameStart onGameStart;
     public static event OnGameStart onGameEnd;
 
+    private Slider InfectionSlider;
+    public int InfectionSliderReset = 0;
+
+    public bool disabledOnce = false;
+
     public int Score { get; set; }
     public int HighScore{ get; set; }
 
@@ -45,11 +51,12 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        InfectionSlider = GameObject.FindGameObjectWithTag("Infection Slider").GetComponent<Slider>();
         Player = GameObject.FindGameObjectWithTag("Player"); //define player object.
         initPlayer = transform.position;
         Player.transform.GetChild(3).gameObject.SetActive(false);
         startGame = false; // the game has not started yet
-        PlayerChildColl.onCollision += ResetLevel; // initialize the game
+        PlayerChildColl.onCollision += ResetLevel; // initialize the game        
         StartCoroutine(WaitForSpace()); //waiting for press space key to start
     }
 
@@ -62,16 +69,10 @@ public class GameManager : MonoBehaviour
 
     private void GameStart()
     {
-        //disables the masks on alien faces
-        GameObject[] MaskArray = GameObject.FindGameObjectsWithTag("Mask");
-        if (MaskArray.Length > 0)
-        {            
-            for (int i = 0; i < MaskArray.Length; i++)
-            {
-                GameObject go = MaskArray[i];
-                go.SetActive(false);
-            }
-        }
+        InfectionSlider.value = 0;
+        InfectionSlider.minValue = 0;
+        InfectionSlider.maxValue = 1;
+        //disables the masks on alien faces              
         onGameStart(); // update the event as active game.
         CurrentGameSpeed = SpeedMin; // initalize the first speed.
         startGame = true;
@@ -79,7 +80,7 @@ public class GameManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {        
         RenderSettings.skybox.SetFloat("_Rotation", Time.time * RotateSkybox);
         if (startGame)
         {
@@ -100,6 +101,8 @@ public class GameManager : MonoBehaviour
 
                 }
             }
+
+            if(InfectionSlider.value >=1) ResetLevel();
 
             if (Player.transform.position.y <0)
             {
